@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+<link rel="stylesheet" href="style.css"/>
+    <title>Weather App</title>
+  </head>
+
+  <body>
+    <div>
+      <div class="search">
+        <form>
+          <input id="city-input" type="text" placeholder="Search city">
+          <button id="search-btn" type="button"><i class="fa fa-search"></i></button>
+        </form>
+      </div>
+  
+      <div class="container">
+        <div class="upper-data">
+          <img id="weather-background" src="">
+          <div class="weather-data">
+            <div id="location" class="location"></div>
+            <div id="temperature" class="temperature"></div>
+            <img id="weather-icon" src="">
+            <span id="feel-temperature"></span>
+          </div>
+        </div>
+  
+        <div class="lower-data">
+          <div class="more-info-label">More Information</div>
+          <div class="more-info-container" id="more-info-container">
+            <!-- Information blocks will be populated here -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer>
+      <span>Made By <a class="link" href="https://www.linkedin.com/in/soumya-ranjan-dash-461923216/">Soumya Ranjan Dash <i class="fa fa-rocket"></i></a></span>
+    </footer>
+    <script>
+      const apiKey = '7e73b584cb1628d03ad81f3b7c91a50d';
+      const unsplashApiKey = '4fIKQuCFC15hnzZQSCD8ShKKil8Zh9zSndACUgvpId8';
+      const pexelsApiKey = 'kh8Th7jgdwPuUVSfFIEbHmHMxcZFboNMA7Oyma6FYei6bY2EklWVQ87B'
+      const searchBtn = document.getElementById('search-btn');
+      const cityInput = document.getElementById('city-input');
+      const weatherIcon = document.getElementById('weather-icon');
+      const weatherBackground = document.getElementById('weather-background');
+      const locationElement = document.getElementById('location');
+      const temperatureElement = document.getElementById('temperature');
+      const feelTemperatureSpan = document.getElementById('feel-temperature');
+      const moreInfoContainer = document.getElementById('more-info-container');
+
+      // Function to fetch weather data using coordinates
+      function fetchWeatherData(latitude, longitude) {
+        fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`)
+          .then(response => response.json())
+          .then(data => {
+            locationElement.textContent = data.name;
+            temperatureElement.textContent = `${data.main.temp}°C`;
+            feelTemperatureSpan.textContent = `Feels Like: ${data.main.feels_like}°C`;
+            weatherIcon.src = `http://openweathermap.org/img/wn/${data.weather[0].icon}.png`;
+            this.fetchBackgroundImage(data);
+            // Populate more information
+            const infoBlocks = [{
+                label: 'min',
+                value: `${data.main.temp_min}°C`,
+                icon: 'https://cdn-icons-png.flaticon.com/512/6252/6252117.png'
+              },
+              {
+                label: 'max',
+                value: `${data.main.temp_max}°C`,
+                icon: 'https://cdn-icons-png.flaticon.com/512/6218/6218295.png'
+              },
+              {
+                label: 'humidity',
+                value: `${data.main.humidity}%`,
+                icon: 'https://cdn-icons-png.flaticon.com/512/6631/6631820.png'
+              },
+              {
+                label: 'wind',
+                value: `${data.wind.speed} km/h`,
+                icon: 'https://cdn-icons-png.flaticon.com/512/902/902550.png'
+              }
+            ];
+
+            moreInfoContainer.innerHTML = '';
+            infoBlocks.forEach(info => {
+              const infoBlock = document.createElement('div');
+              infoBlock.classList.add('info-block');
+
+              const infoBlockLabel = document.createElement('div');
+              infoBlockLabel.classList.add('info-block-label');
+              const icon = document.createElement('img');
+              icon.src = info.icon;
+              const span = document.createElement('span');
+              span.textContent = info.label;
+              infoBlockLabel.appendChild(icon);
+              infoBlockLabel.appendChild(span);
+
+              const infoBlockValue = document.createElement('div');
+              infoBlockValue.classList.add('info-block-value');
+              infoBlockValue.textContent = info.value;
+
+              infoBlock.appendChild(infoBlockLabel);
+              infoBlock.appendChild(infoBlockValue);
+
+              moreInfoContainer.appendChild(infoBlock);
+            });
+          })
+          .catch(error => console.error('Error fetching weather data:', error));
+      }
+
+      // Function to handle successful retrieval of user's location
+      function handleSuccess(position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        fetchWeatherData(latitude, longitude);
+      }
+
+      // Function to handle errors during location retrieval
+      function handleError(error) {
+        console.error('Error getting user location:', error);
+      }
+
+      // Attempt to get user's location
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
+      } else {
+        console.error('Geolocation is not supported by this browser.');
+      }
+
+      // Event listener for search button
+      searchBtn.addEventListener('click', () => {
+        const city = cityInput.value.trim();
+        if (city !== '') {
+          fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`)
+            .then(response => response.json())
+            .then(data => {
+              locationElement.textContent = data.name;
+              temperatureElement.textContent = `${data.main.temp}°C`;
+              feelTemperatureSpan.textContent = `Feels Like: ${data.main.feels_like}°C`;
+              weatherIcon.src = `http://openweathermap.org/img/wn/${data.weather[0].icon}.png`;
+              this.fetchBackgroundImage(data);
+
+              // Populate more information
+              const infoBlocks = [{
+                  label: 'min',
+                  value: `${data.main.temp_min}°C`,
+                  icon: 'https://cdn-icons-png.flaticon.com/512/6252/6252117.png'
+                },
+                {
+                  label: 'max',
+                  value: `${data.main.temp_max}°C`,
+                  icon: 'https://cdn-icons-png.flaticon.com/512/6218/6218295.png'
+                },
+                {
+                  label: 'humidity',
+                  value: `${data.main.humidity}%`,
+                  icon: 'https://cdn-icons-png.flaticon.com/512/6631/6631820.png'
+                },
+                {
+                  label: 'wind',
+                  value: `${data.wind.speed} km/h`,
+                  icon: 'https://cdn-icons-png.flaticon.com/512/902/902550.png'
+                }
+              ];
+
+              moreInfoContainer.innerHTML = '';
+              infoBlocks.forEach(info => {
+                const infoBlock = document.createElement('div');
+                infoBlock.classList.add('info-block');
+
+                const infoBlockLabel = document.createElement('div');
+                infoBlockLabel.classList.add('info-block-label');
+                const icon = document.createElement('img');
+                icon.src = info.icon;
+                const span = document.createElement('span');
+                span.textContent = info.label;
+                infoBlockLabel.appendChild(icon);
+                infoBlockLabel.appendChild(span);
+
+                const infoBlockValue = document.createElement('div');
+                infoBlockValue.classList.add('info-block-value');
+                infoBlockValue.textContent = info.value;
+
+                infoBlock.appendChild(infoBlockLabel);
+                infoBlock.appendChild(infoBlockValue);
+
+                moreInfoContainer.appendChild(infoBlock);
+              });
+            })
+            .catch(error => console.error('Error fetching weather data:', error));
+        }
+      });
+      // Function to fetch background image based on weather using Unsplash API
+      function fetchBackgroundImage(weather) {
+      console.log('i am bg image')
+        const timeOfDay = this.getTimeOfDay(weather.sys.sunrise, weather.sys.sunset);
+        const query = encodeURIComponent(weather.weather[0].description + ' weather in ' +  weather.name+ ' at ' + timeOfDay );
+
+        fetch(`https://api.pexels.com/v1/search?query=${query}&per_page=80`, {
+            headers: {
+              Authorization: pexelsApiKey
+            }
+          })
+          .then(response => response.json())
+          .then(data => {
+            // Check if there are any images available
+            if (data.photos && data.photos.length > 0) {
+              // Use the first image as an example
+              const index = Math.floor(Math.random() * data.photos.length);
+              const imageUrl = data.photos[index].src.landscape;
+              // Apply the image to an element or use it as needed
+              weatherBackground.src = `${imageUrl}`;
+            } else {
+              console.error('No images found for the query:', query);
+            }
+          })
+          .catch(error => console.error('Error fetching images:', error));
+
+        /*  fetch(`https://api.unsplash.com/search/photos?query=${query}&client_id=${unsplashApiKey}`)
+           .then(response => response.json())
+           .then(data => {
+             // Check if there are any images available
+             if (data.results && data.results.length > 0) {
+               // Use the first image as the background
+               const index = Math.floor(Math.random() * data.results.length);
+               const imageUrl = data.results[index].urls.regular;
+               // Apply the image as the background
+               weatherBackground.src = `${imageUrl}`;
+             } else {
+               console.error('No background image found for the weather status:', weatherStatus);
+             }
+           })
+           .catch(error => console.error('Error fetching background image:', error)); */
+      }
+
+      function getTimeOfDay(sunriseTimestamp, sunsetTimestamp) {
+        const currentTimestamp = Math.floor(Date.now() / 1000);
+
+        if (currentTimestamp < sunriseTimestamp || currentTimestamp > sunsetTimestamp) {
+          return 'night';
+        } else if (currentTimestamp > sunriseTimestamp && currentTimestamp < sunsetTimestamp) {
+          return 'day';
+        } else {
+          return 'evening';
+        }
+      }
+
+    </script>
+  </body>
+
+</html>
