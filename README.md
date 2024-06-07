@@ -34,7 +34,7 @@ This is a web application that provides weather forecasts based on the user's cu
    git clone https://github.com/yourusername/weather-forecast-app.git
    cd weather-forecast-app
 2. **Open index.html:**
-   Simply open the index.html file in your web browser to run the application.
+   Simply open the [index.html](WeatherbySoumya/index.html) file in your web browser to run the application.
 
 ## Usage
 **Current Location Weather:**
@@ -49,12 +49,14 @@ This is a web application that provides weather forecasts based on the user's cu
 - The background image will change based on the current weather conditions and time of day (day, night, rain, cloudy, etc.) of the searched city.
 
 ## File Structure
+```
   weather-forecast-app/
   │
   ├── index.html          # Main HTML file
   ├── style.css           # CSS file for styling
   ├── script.js           # JavaScript file for functionality
   └── assets/             # Directory for assets (images, icons, etc.)
+```
 
 ## Contributing
 **Contributions are welcome! Please follow these steps:**
@@ -65,8 +67,8 @@ This is a web application that provides weather forecasts based on the user's cu
   5. Open a Pull Request.
 
 ## License
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License. See the [LICENSE]() file for details.
 
 ## Acknowledgments
-Thanks to the OpenWeather team for their excellent weather API.
-Thanks to the Pexels team for providing high-quality images for the dynamic background feature.
+- Thanks to the [OpenWeather](https://openweathermap.org/) team for their excellent weather API.
+- Thanks to the [Pexels](https://www.pexels.com/) team for providing high-quality images for the dynamic background feature.
